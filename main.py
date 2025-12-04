@@ -129,9 +129,13 @@ async def cancel(ctx):
 
 @bot.event
 async def on_ready():
-    print(f"Бот {bot.user} работает 24/7 — ЛС отключены")
+    await bot.change_presence(
+        activity=discord.Game(name="кикну через !timer")
+    )
+    print(f"Бот {bot.user} онлайн — статус установлен")
 
 import os
 bot.run(os.getenv("TOKEN"))
+
 
 
