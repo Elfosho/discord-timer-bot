@@ -104,7 +104,7 @@ class CustomTimerModal(discord.ui.Modal, title="Своё время (в мину
 
         time_text = f"{mins} мин" if mins < 60 else f"{mins//60} ч {mins%60} мин" if mins%60 else f"{mins//60} ч"
         await interaction.response.send_message(
-            f"⏰ {self.author.mention}, через **{time_text}** тебя молча кикнет из голосовки.\nОтменить → `!cancel`"
+            f"⏰ {self.author.mention}, через **{time_text}** тебя кикнет из голоса.\nОтменить → `!cancel`"
         )
 
 @bot.command()
@@ -133,4 +133,5 @@ async def on_ready():
 
 import os
 bot.run(os.getenv("TOKEN"))
+
 
