@@ -12,19 +12,19 @@ class Roulette(commands.Cog):
     async def roulette(self, ctx):
         # Проверка голосового канала
         if not ctx.author.voice or not ctx.author.voice.channel:
-            await ctx.send("❌ Ты должен быть в голосовом канале, чтобы играть!")
+            await ctx.send("Ты должен быть в голосовом канале, чтобы играть!")
             return
 
-        await ctx.send("🎲 Крутим рулетку...")
+        await ctx.send("Крутим рулетку...")
         await asyncio.sleep(2)
 
         chamber = random.randint(1, 6)
 
         if chamber == 1:
-            await ctx.send("💥 БАХ! Не повезло... Ты вылетаешь из голосового!")
+            await ctx.send("На нахуй")
             await ctx.author.move_to(None)
         else:
-            await ctx.send("😎 Повезло! Ты остаёшься в голосовом.")
+            await ctx.send("Повезло, повезло.")
 
 async def setup(bot):
     await bot.add_cog(Roulette(bot))
