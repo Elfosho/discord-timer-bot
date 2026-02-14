@@ -7,6 +7,17 @@ intents.message_content = True
 intents.voice_states = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
+import asyncio
+
+async def load_extensions():
+    await bot.load_extension("cogs.roulette")
+
+async def main():
+    async with bot:
+        await load_extensions()
+        await bot.start("TOKEN")
+
+asyncio.run(main())
 
 timers = {}
 
