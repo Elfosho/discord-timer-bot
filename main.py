@@ -147,8 +147,9 @@ import os
 TOKEN = os.getenv("TOKEN")
 if TOKEN:
     TOKEN = TOKEN.strip()
-if not TOKEN:
-    raise RuntimeError("Discord bot token not set or is empty in environment variable TOKEN")
+if len(TOKEN) < 30:
+    raise RuntimeError("Discord bot token appears too short; check the value in environment variable TOKEN")
+print(f"[DEBUG] Token length: {len(TOKEN)}")
 bot.run(TOKEN)
 
 
