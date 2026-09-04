@@ -145,8 +145,10 @@ async def on_ready():
 
 import os
 TOKEN = os.getenv("TOKEN")
+if TOKEN:
+    TOKEN = TOKEN.strip()
 if not TOKEN:
-    raise RuntimeError("Discord bot token not set in environment variable TOKEN")
+    raise RuntimeError("Discord bot token not set or is empty in environment variable TOKEN")
 bot.run(TOKEN)
 
 
