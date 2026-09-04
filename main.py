@@ -1,12 +1,17 @@
 import discord
 from discord.ext import commands
 import asyncio
+import os
+
+from discord import app_commands
+
+
 
 intents = discord.Intents.default()
-intents.message_content = True
 intents.voice_states = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
+# Use the built‑in tree attached to the Bot instance (bot.tree)
 
 
 timers = {}
@@ -74,7 +79,7 @@ class TimerView(discord.ui.View):
 
         time_text = f"{minutes} мин" if minutes < 60 else f"{minutes//60} ч {minutes%60} мин" if minutes%60 else f"{minutes//60} ч"
         await interaction.response.edit_message(
-            content=f"⏰ {self.author.mention}, через **{time_text}** тебя молча кикнет из голосовки.\nОтменить → `!cancel`",
+            content=f"⏰ {self.author.mention}, через **{time_text}** тебя молча кикнет из голоса.\nОтменить → `!cancel`",
             view=None
         )
 
@@ -108,35 +113,41 @@ class CustomTimerModal(discord.ui.Modal, title="Своё время (в мину
             f"⏰ {self.author.mention}, через **{time_text}** тебя кикнет из голоса.\nОтменить → `!cancel`"
         )
 
-@bot.command()
-async def timer(ctx):
-    if not ctx.author.voice or not ctx.author.voice.channel:
-        return await ctx.send("Ты не в голосовом канале.")
+@bot.tree.command(name="timer", description="Запустить таймер")
+async def timer(interaction: discord.Interaction):
+    author = interaction.user
+    if not author.voice or not author.voice.channel:
+        return await interaction.response.send_message("Ты не в голосовом канале.", ephemeral=True)
 
-    if ctx.author.id in timers:
-        return await ctx.send("У тебя уже стоит таймер. Используй `!cancel`.")
+    if author.id in timers:
+        return await interaction.response.send_message("У тебя уже стоит таймер. Используй `/cancel`.", ephemeral=True)
 
-    view = TimerView(ctx.author)
-    await ctx.send("Выбери время отключения:", view=view)
+    view = TimerView(author)
+    await interaction.response.send_message("Выбери время отключения:", view=view)
 
-@bot.command()
-async def cancel(ctx):
-    if ctx.author.id in timers:
-        timers[ctx.author.id].cancel()
-        timers.pop(ctx.author.id)
-        await ctx.send(f"⏰ {ctx.author.mention}, таймер отменён.")
+@bot.tree.command(name="cancel", description="Отменить текущий таймер")
+async def cancel(interaction: discord.Interaction):
+    author = interaction.user
+    if author.id in timers:
+        timers[author.id].cancel()
+        timers.pop(author.id)
+        await interaction.response.send_message(f"⏰ {author.mention}, таймер отменён.")
     else:
-        await ctx.send("Нет активного таймера.")
+        await interaction.response.send_message("Нет активного таймера.")
 
 @bot.event
 async def on_ready():
     await bot.change_presence(
-        activity=discord.Game(name="кикну через !timer")
+        activity=discord.Game(name="кикну через /timer")
     )
+    await bot.tree.sync()
     print(f"Бот {bot.user} онлайн — статус установлен")
 
 import os
-bot.run(os.getenv("TOKEN"))
+TOKEN = os.getenv("TOKEN")
+if not TOKEN:
+    raise RuntimeError("Discord bot token not set in environment variable TOKEN")
+bot.run(TOKEN)
 
 
 
