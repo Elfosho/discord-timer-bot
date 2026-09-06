@@ -2,6 +2,8 @@ import discord
 from discord.ext import commands
 import asyncio
 import os
+import sys
+from dotenv import load_dotenv
 
 from discord import app_commands
 
@@ -143,10 +145,12 @@ async def on_ready():
     await bot.tree.sync()
     print(f"Бот {bot.user} онлайн — статус установлен")
 
-import os
+load_dotenv()
 TOKEN = os.getenv("TOKEN")
-if TOKEN:
-    TOKEN = TOKEN.strip()
+if not TOKEN:
+    print("[ERROR] Discord bot token not found. Please set the TOKEN environment variable.")
+    sys.exit(1)
+TOKEN = TOKEN.strip()
 if len(TOKEN) < 30:
     raise RuntimeError("Discord bot token appears too short; check the value in environment variable TOKEN")
 print(f"[DEBUG] Token length: {len(TOKEN)}")
